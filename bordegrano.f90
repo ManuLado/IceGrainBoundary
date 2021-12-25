@@ -27,14 +27,14 @@ program bordedegrano
   write(1,*) "set nokey"
   write(1,*) "set grid"
   do k=1,superpaso
-  if (mod(k,paso)==0) then
-  write(karakt,'(I10)') k
-  write(1,*) 'set title "perfil t=',trim(adjustl(karakt)),'.dt s"'
-  write(chain2,*) trim('"perfil'//trim(adjustl(karakt))//'pasos' //
-  '.dat"'//' with linespoints')
-  write(1,*)'set output ' ,'"',trim(adjustl(karakt)),'.png"'
-  write(1,*) "plot ",chain2
-  end if
+    if (mod(k,paso)==0) then
+      write(karakt,'(I10)') k
+      write(1,*) 'set title "perfil t=',trim(adjustl(karakt)),'.dt s"'
+      write(chain2,*) trim('"perfil'//trim(adjustl(karakt))//'pasos' //
+      '.dat"'//' with linespoints')
+      write(1,*)'set output ' ,'"',trim(adjustl(karakt)),'.png"'
+      write(1,*) "plot ",chain2
+    end if
   end do
   !------------------------------------------------------------------------------
   allocate
@@ -67,17 +67,17 @@ program bordedegrano
   M(5,3)=12
   M(6,3)=-1
   do i=4,N-3
-  do j=4,N-3
-  if (i==j) then
-  M(i,j)=56
-  M(i+1,j)=-39
-  M(i+2,j)=12
-  M(i+3,j)=-1
-  M(i-3,j)=-1
-  M(i-2,j)=12
-  M(i-1,j)=-39
-  end if
-  end do
+    do j=4,N-3
+      if (i==j) then
+        M(i,j)=56
+        M(i+1,j)=-39
+        M(i+2,j)=12
+        M(i+3,j)=-1
+        M(i-3,j)=-1
+        M(i-2,j)=12
+        M(i-1,j)=-39
+      end if
+    end do
   end do
   M(N,N)=28
   M(N,N-1)=-28
@@ -122,15 +122,15 @@ program bordedegrano
   P(5,2)=0
   P(5,3)=-1
   do i=4,N-2
-  do j=4,N-2
-  if (i==j) then
-  P(i,j)=-30
-  P(i+1,j)=16
-  P(i+2,j)=-1
-  P(i-2,j)=-1
-  P(i-1,j)=16
-  end if
-  end do
+    do j=4,N-2
+      if (i==j) then
+        P(i,j)=-30
+        P(i+1,j)=16
+        P(i+2,j)=-1
+        P(i-2,j)=-1
+        P(i-1,j)=16
+      end if
+    end do
   end do
   P(N,N)=-15
   P(N,N-1)=15
@@ -159,11 +159,12 @@ program bordedegrano
   y0=y
   x0=0.d0
   do i=1,N !producto matriz por vector
-  do j=1,N
-  mmult(i)=mmult(i)+real(M(i,j),kind(1.d0))*y0(j)
-  mmult2(i)=mmult2(i)+real(P(i,j),kind(1.d0))*y0(j)
-  end doy(i)=y0(i)+(A*mmult2(i)/(12.d0*(h**2))+vector_A(i)-
-  B*mmult(i)/(6.d0*(h**4)))*dt
+    do j=1,N
+      mmult(i)=mmult(i)+real(M(i,j),kind(1.d0))*y0(j)
+      mmult2(i)=mmult2(i)+real(P(i,j),kind(1.d0))*y0(j)
+    end do
+    y(i)=y0(i)+(A*mmult2(i)/(12.d0*(h**2))+vector_A(i)-
+    B*mmult(i)/(6.d0*(h**4)))*dt
   end do
   ymax=maxval(y)
   ymin=minval(y)
@@ -175,26 +176,26 @@ program bordedegrano
   !----------------------------------- Comandos para que escriba los datos
   ! en archivos con nombre "perfil-paso.dat"
   if (mod(k,paso)==0) then
-  Write(tiempo,'(i10)') k
-  write(*,*) k
-  archivo=trim( 'perfil' //trim(adjustl(tiempo))// 'pasos' // '.dat')
-  open(unit=30,file=archivo,status="replace")
-  do i=1,N
-  write(30,6)x0, y(i)
-  x0=x0+h
-  end do
-  close(30)
-  do i=1,N
-  x0=x0+h
-  if (i==imax) then
-  write(3,*)tt,x0, y(imax)
-  write(2,*)tt*tangbeta, depth
+    Write(tiempo,'(i10)') k
+    write(*,*) k
+    archivo=trim( 'perfil' //trim(adjustl(tiempo))// 'pasos' // '.dat')
+    open(unit=30,file=archivo,status="replace")
+    do i=1,N
+      write(30,6)x0, y(i)
+      x0=x0+h
+    end do
+    close(30)
+    do i=1,N
+      x0=x0+h
+      if (i==imax) then
+        write(3,*)tt,x0, y(imax)
+        write(2,*)tt*tangbeta, depth
+      end if
+    end do
   end if
-  end do
-  end if
-  end do
-  close (2)
-  close(3)
-  !*************************************
-  call system('gnuplot -p plot.plt')
+end do
+close (2)
+close(3)
+!*************************************
+call system('gnuplot -p plot.plt')
 end program bordedegrano
